@@ -1,0 +1,17 @@
+{
+  "name": "projeto-api-movieflix",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx tsx watch src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "tsx": "^4.17.0",
+    "typescript": "^5.5.4"
+  }
+}
