@@ -20,6 +20,49 @@ app.get("/movies", async (_, res) => {
     res.json(movies);
 });
 
+app.get("/movies/:genreName", async (req, res) => {
+    const genreName = req.params.genreName;
+
+    try {
+        const genreExists = await prisma.movie.findFirst({
+            where: {
+                genres: {
+                    name: {
+                        equals: genreName,
+                        mode: "insensitive",
+                    },
+                },
+            },
+        });
+
+        if (!genreExists) {
+            return res.status(404).send({
+                message: "Nenhum filme com esse gênero foi encontrado",
+            });
+        }
+        const moviesFilteredByGenreName = await prisma.movie.findMany({
+            include: {
+                genres: true,
+                languages: true,
+            },
+            where: {
+                genres: {
+                    name: {
+                        equals: genreName,
+                        mode: "insensitive",
+                    },
+                },
+            },
+        });
+        res.status(200).send(moviesFilteredByGenreName);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            message: "Falha ao filtrar os filmes por gênero",
+        });
+    }
+});
+
 app.post("/movies", async (req, res) => {
     const { title, genre_id, language_id, oscar_count, release_date } =
         req.body;
