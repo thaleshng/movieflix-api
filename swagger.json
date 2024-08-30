@@ -27,6 +27,44 @@
                 }
             }
         },
+        "/movies/{genreName}": {
+            "get": {
+                "tags": ["Movie"],
+                "summary": "Filtrar a lista de filmes por gênero",
+                "parameters": [
+                    {
+                        "name": "genreName",
+                        "in": "path",
+                        "required": true,
+                        "description": "Nome do gênero do filme",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Retorna uma lista de filmes filtradas por gênero",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Movie"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Nenhum filme com esse gênero foi encontrado"
+                    },
+                    "500": {
+                        "description": "Falha ao filtrar os filmes por gênero"
+                    }
+                }
+            }
+        },
         "/movies/{id}": {
             "put": {
                 "tags": ["Movie"],
