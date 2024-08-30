@@ -63,6 +63,32 @@
                         "description": "Falha ao atualizar o registro do filme"
                     }
                 }
+            },
+            "delete": {
+                "tags": ["Movie"],
+                "summary": "Remover um filme",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in":"path",
+                        "required": true,
+                        "description": "ID do filme à ser removido",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Filme removido com sucesso"
+                    },
+                    "404": {
+                        "description": "O filme não foi encontrado"
+                    },
+                    "500": {
+                        "description": "Ocorreu um erro ao deletar o filme"
+                    }
+                }
             }
         }
     },
