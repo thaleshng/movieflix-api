@@ -8,12 +8,13 @@
     "paths": {
         "/movies": {
             "get": {
+                "tags": ["Movie"],
                 "summary": "Obter uma lista com todos os filmes",
                 "responses": {
                     "200": {
                         "description": "Retorna uma lista de filmes",
                         "content": {
-                            "aplication/json": {
+                            "application/json": {
                                 "schema": {
                                     "type": "array",
                                     "items": {
@@ -22,6 +23,44 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/movies/{id}": {
+            "put": {
+                "tags": ["Movie"],
+                "summary": "Atualizar um filme",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do filme à ser atualizado",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MovieInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Filme atualizado com sucesso"
+                    },
+                    "404": {
+                        "description": "Filme não encontrado"
+                    },
+                    "500": {
+                        "description": "Falha ao atualizar o registro do filme"
                     }
                 }
             }
@@ -78,6 +117,39 @@
                                 "description": "idioma do filme"
                             }
                         }
+                    },
+                    "oscar_count": {
+                        "type": "integer",
+                        "description": "Quantidade de oscars ganhos pelo filme"
+                    }
+                }
+            },
+            "MovieInput": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "release_date",
+                    "genre_id",
+                    "language_id",
+                    "oscar_count"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "Título do filme"
+                    },
+                    "release_date": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Data de lançamento do filme"
+                    },
+                    "genre_id": {
+                        "type": "integer",
+                        "description": "ID do gênero"
+                    },
+                    "language_id": {
+                        "type": "integer",
+                        "description": "ID do idioma do filme"
                     },
                     "oscar_count": {
                         "type": "integer",
