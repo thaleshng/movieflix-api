@@ -251,6 +251,33 @@ app.delete("/movies/:id", async (req, res) => {
     res.status(200).send();
 });
 
+app.delete("/genres/:id", async (req, res) => {
+    const id = Number(req.params.id);
+
+    try {
+        const genre = await prisma.genre.findUnique({
+            where: { id },
+        });
+
+        if (!genre) {
+            return res
+                .status(404)
+                .send({ message: "O gênero não foi encontrado" });
+        }
+
+        await prisma.genre.delete({
+            where: { id },
+        });
+
+        res.status(200).send({ message: "Gênero deletado" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            message: "Ocorreu um erro ao deletar o gênero",
+        });
+    }
+});
+
 app.listen(port, () => {
     console.log(`O servidor está em execução em http://localhost:${port}`);
 });
