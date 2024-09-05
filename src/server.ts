@@ -130,6 +130,36 @@ app.put("/movies/:id", async (req, res) => {
     res.status(200).send();
 });
 
+app.put("/genres/:id", async (req, res) => {
+    const id = Number(req.params.id);
+
+    try {
+        const data = { ...req.body };
+
+        const genre = await prisma.genre.findUnique({
+            where: { id },
+        });
+
+        if (!genre) {
+            res.status(404).send({ message: "Gênero não encontrado" });
+        }
+
+        await prisma.genre.update({
+            where: {
+                id,
+            },
+            data,
+        });
+
+        res.status(200).send({ message: "Gênero atualizado com sucesso" });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            message: "Ocorreu um erro ao atualizar o gênero",
+        });
+    }
+});
+
 app.delete("/movies/:id", async (req, res) => {
     const id = Number(req.params.id);
 
