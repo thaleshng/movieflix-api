@@ -144,6 +144,21 @@ app.put("/genres/:id", async (req, res) => {
             res.status(404).send({ message: "Gênero não encontrado" });
         }
 
+        const existingGenre = await prisma.genre.findFirst({
+            where: {
+                name: { equals: data.name, mode: "insensitive" },
+                id: { not: id },
+            },
+        });
+
+        console.log(existingGenre);
+
+        if (existingGenre) {
+            return res
+                .status(409)
+                .send({ message: "Este nome de gênero já existe." });
+        }
+
         await prisma.genre.update({
             where: {
                 id,
