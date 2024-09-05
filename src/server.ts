@@ -66,6 +66,21 @@ app.get("/movies/:genreName", async (req, res) => {
     }
 });
 
+app.get("/genres", async (req, res) => {
+    try {
+        const genres = await prisma.genre.findMany({
+            orderBy: {
+                id: "asc",
+            },
+        });
+
+        res.json(genres);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Houve um erro ao listar os gêneros" });
+    }
+});
+
 app.post("/movies", async (req, res) => {
     const { title, genre_id, language_id, oscar_count, release_date } =
         req.body;
