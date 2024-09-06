@@ -12,6 +12,20 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get("/movies", async (req, res) => {
     const { sort } = req.query;
+    const { language } = req.query;
+    const languageName = language as string;
+
+    let where = {};
+    if (languageName) {
+        where = {
+            languages: {
+                name: {
+                    equals: languageName,
+                    mode: "insensitive",
+                },
+            },
+        };
+    }
 
     let orderBy:
         | Prisma.MovieOrderByWithRelationInput
@@ -42,6 +56,7 @@ app.get("/movies", async (req, res) => {
 
     try {
         const movies = await prisma.movie.findMany({
+            where,
             orderBy,
             include: {
                 genres: true,
