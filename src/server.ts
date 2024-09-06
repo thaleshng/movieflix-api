@@ -1,5 +1,5 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "../swagger.json";
 
@@ -10,12 +10,39 @@ const prisma = new PrismaClient();
 app.use(express.json());
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.get("/movies", async (_, res) => {
+app.get("/movies", async (req, res) => {
+    const { sort } = req.query;
+
+    let orderBy:
+        | Prisma.MovieOrderByWithRelationInput
+        | Prisma.MovieOrderByWithRelationInput[]
+        | undefined;
+
+    if (sort === "title") {
+        orderBy = {
+            title: "asc",
+        };
+    } else if (sort === "release_date") {
+        orderBy = {
+            release_date: "asc",
+        };
+    } else if (sort === "oscar_count") {
+        orderBy = {
+            oscar_count: "asc",
+        };
+    } else if (sort === "duration") {
+        orderBy = {
+            duration: "asc",
+        };
+    } else {
+        orderBy = {
+            id: "asc",
+        };
+    }
+
     try {
         const movies = await prisma.movie.findMany({
-            orderBy: {
-                title: "asc",
-            },
+            orderBy,
             include: {
                 genres: true,
                 languages: true,
