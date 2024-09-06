@@ -2,14 +2,34 @@
     "openapi": "3.0.0",
     "info": {
         "title": "MovieFlix API",
-        "description": "API responsável por gerenciar os filmes do MovieFlix",
-        "version": "1.0.0"
+        "description": "API responsável por gerenciar os filmes e gêneros do MovieFlix",
+        "version": "1.1.0"
     },
     "paths": {
         "/movies": {
             "get": {
                 "tags": ["Movie"],
                 "summary": "Obter uma lista com todos os filmes",
+                "parameters": [
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "required": false,
+                        "description": "Ordenar a lista de filmes. Pode ser por 'title', 'release_date', 'oscar_count', 'duration' ou 'id'",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "language",
+                        "in": "query",
+                        "required": false,
+                        "description": "Filtrar a lista de filmes pelo nome do idioma",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Retorna uma lista de filmes",
@@ -23,6 +43,34 @@
                                 }
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Houve um problema ao buscar os filmes"
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Movie"],
+                "summary": "Adicionar um novo filme",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MovieInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Filme criado com sucesso"
+                    },
+                    "409": {
+                        "description": "Já existe um filme cadastrado com esse título"
+                    },
+                    "500": {
+                        "description": "Falha ao cadastrar o filme"
                     }
                 }
             }
@@ -44,7 +92,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Retorna uma lista de filmes filtradas por gênero",
+                        "description": "Retorna uma lista de filmes filtrada por gênero",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -108,7 +156,7 @@
                 "parameters": [
                     {
                         "name": "id",
-                        "in":"path",
+                        "in": "path",
                         "required": true,
                         "description": "ID do filme à ser removido",
                         "schema": {
@@ -125,6 +173,122 @@
                     },
                     "500": {
                         "description": "Ocorreu um erro ao deletar o filme"
+                    }
+                }
+            }
+        },
+        "/genres": {
+            "get": {
+                "tags": ["Genre"],
+                "summary": "Obter uma lista com todos os gêneros",
+                "responses": {
+                    "200": {
+                        "description": "Retorna uma lista de gêneros",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Genre"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Houve um erro ao listar os gêneros"
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Genre"],
+                "summary": "Adicionar um novo gênero",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GenreInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Gênero adicionado com sucesso"
+                    },
+                    "409": {
+                        "description": "Já existe um gênero com esse nome"
+                    },
+                    "500": {
+                        "description": "Ocorreu um erro ao adicionar o gênero"
+                    }
+                }
+            }
+        },
+        "/genres/{id}": {
+            "put": {
+                "tags": ["Genre"],
+                "summary": "Atualizar um gênero",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do gênero a ser atualizado",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GenreInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Gênero atualizado com sucesso"
+                    },
+                    "404": {
+                        "description": "Gênero não encontrado"
+                    },
+                    "409": {
+                        "description": "Este nome de gênero já existe"
+                    },
+                    "500": {
+                        "description": "Ocorreu um erro ao atualizar o gênero"
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Genre"],
+                "summary": "Remover um gênero",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID do gênero a ser removido",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Gênero removido com sucesso"
+                    },
+                    "404": {
+                        "description": "O gênero não foi encontrado"
+                    },
+                    "500": {
+                        "description": "Ocorreu um erro ao deletar o gênero"
                     }
                 }
             }
@@ -174,17 +338,21 @@
                         "properties": {
                             "id": {
                                 "type": "integer",
-                                "description": "ID do idioma do filme"
+                                "description": "ID do idioma"
                             },
                             "name": {
                                 "type": "string",
-                                "description": "idioma do filme"
+                                "description": "Idioma do filme"
                             }
                         }
                     },
                     "oscar_count": {
                         "type": "integer",
                         "description": "Quantidade de oscars ganhos pelo filme"
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "description": "Duração do filme em minutos"
                     }
                 }
             },
@@ -195,7 +363,8 @@
                     "release_date",
                     "genre_id",
                     "language_id",
-                    "oscar_count"
+                    "oscar_count",
+                    "duration"
                 ],
                 "properties": {
                     "title": {
@@ -213,11 +382,38 @@
                     },
                     "language_id": {
                         "type": "integer",
-                        "description": "ID do idioma do filme"
+                        "description": "ID do idioma"
                     },
                     "oscar_count": {
                         "type": "integer",
                         "description": "Quantidade de oscars ganhos pelo filme"
+                    },
+                    "duration": {
+                        "type": "integer",
+                        "description": "Duração do filme em minutos"
+                    }
+                }
+            },
+            "Genre": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "ID do gênero"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "Nome do gênero"
+                    }
+                }
+            },
+            "GenreInput": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Nome do gênero"
                     }
                 }
             }
