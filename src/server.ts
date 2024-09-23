@@ -64,6 +64,24 @@ app.get("/movies", async (req, res) => {
             },
         });
 
+        const formattedMovies = movies.map((movie) => ({
+            id: movie.id,
+            title: movie.title,
+            release_date: movie.release_date,
+            genre_id: movie.genre_id,
+            genres: {
+                id: movie.genres?.id,
+                name: movie.genres?.name,
+            },
+            language_id: movie.language_id,
+            languages: {
+                id: movie.languages?.id,
+                name: movie.languages?.name,
+            },
+            oscar_count: movie.oscar_count,
+            duration: movie.duration,
+        }));
+
         const totalMovies = movies.length;
 
         let totalDuration = 0;
@@ -77,7 +95,7 @@ app.get("/movies", async (req, res) => {
         res.json({
             totalMovies,
             averageDuration,
-            movies,
+            movies: formattedMovies,
         });
     } catch (error) {
         console.error(error);
