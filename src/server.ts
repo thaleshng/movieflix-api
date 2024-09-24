@@ -139,7 +139,26 @@ app.get("/movies/:genreName", async (req, res) => {
                 },
             },
         });
-        res.status(200).send(moviesFilteredByGenreName);
+
+        const formattedMovies = moviesFilteredByGenreName.map((movie) => ({
+            id: movie.id,
+            title: movie.title,
+            release_date: movie.release_date,
+            genre_id: movie.genre_id,
+            genres: {
+                id: movie.genres?.id,
+                name: movie.genres?.name,
+            },
+            language_id: movie.language_id,
+            languages: {
+                id: movie.languages?.id,
+                name: movie.languages?.name,
+            },
+            oscar_count: movie.oscar_count,
+            duration: movie.duration,
+        }));
+
+        res.status(200).send(formattedMovies);
     } catch (error) {
         console.error(error);
         res.status(500).send({
